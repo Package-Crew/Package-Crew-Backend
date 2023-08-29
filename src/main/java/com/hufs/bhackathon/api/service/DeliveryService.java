@@ -202,4 +202,9 @@ public class DeliveryService{
 
         return ProcessResponseDto.of(work.getWorkName(), work.getStartDate(), work.getEndDate(), totalSize, doneSize,avgCount, limit, my, myPercent, myTotal);
     }
+
+    public String getVideo(Long trackingNum) {
+        Delivery delivery = deliveryRepository.findByTrackingNum(trackingNum).orElseThrow(() -> new CustomException(ErrorCode.DELIVERY_NOT_FOUND));
+        return delivery.getVideoUrl();
+    }
 }

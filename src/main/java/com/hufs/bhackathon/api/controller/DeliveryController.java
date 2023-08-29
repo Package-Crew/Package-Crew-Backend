@@ -96,4 +96,10 @@ public class DeliveryController {
         ProcessResponseDto result = deliveryService.getAllProcess(workerId);
         return ResponseEntity.ok().body(result);
     }
+
+    @GetMapping("/video")
+    public ResponseEntity<String> getVideo(@RequestParam Long trackingNum) {
+        String result = deliveryService.getVideo(trackingNum);
+        return ResponseEntity.ok().body(result);
+    }
 }
