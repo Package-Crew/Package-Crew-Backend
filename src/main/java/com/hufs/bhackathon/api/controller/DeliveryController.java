@@ -3,6 +3,7 @@ package com.hufs.bhackathon.api.controller;
 import com.hufs.bhackathon.api.dto.request.DeliveryRequestDtoList;
 import com.hufs.bhackathon.api.dto.request.WorkRequestDto;
 import com.hufs.bhackathon.api.dto.response.DashBoardResponseDto;
+import com.hufs.bhackathon.api.dto.response.GetDeliveryResponseDto;
 import com.hufs.bhackathon.api.dto.response.WorkResponseDto;
 import com.hufs.bhackathon.api.dto.response.QrResponseDto;
 import com.hufs.bhackathon.api.service.DeliveryService;
@@ -66,6 +67,12 @@ public class DeliveryController {
     @GetMapping("/dashboard/{workId}")
     public ResponseEntity<DashBoardResponseDto> dashboard(@PathVariable Long workId) {
         DashBoardResponseDto result = deliveryService.dashboard(workId);
+        return ResponseEntity.ok().body(result);
+    }
+
+    @GetMapping("/delivery/{workId}")
+    public ResponseEntity<GetDeliveryResponseDto> getDelivery(@PathVariable Long workId) {
+        GetDeliveryResponseDto result = deliveryService.getDelivery(workId);
         return ResponseEntity.ok().body(result);
     }
 }

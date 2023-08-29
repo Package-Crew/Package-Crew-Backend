@@ -4,10 +4,7 @@ import com.hufs.bhackathon.api.domain.entity.*;
 import com.hufs.bhackathon.api.domain.repository.*;
 import com.hufs.bhackathon.api.dto.request.DeliveryRequestDto;
 import com.hufs.bhackathon.api.dto.request.WorkRequestDto;
-import com.hufs.bhackathon.api.dto.response.DashBoardDeliveryResponseDto;
-import com.hufs.bhackathon.api.dto.response.DashBoardResponseDto;
-import com.hufs.bhackathon.api.dto.response.WorkResponseDto;
-import com.hufs.bhackathon.api.dto.response.QrResponseDto;
+import com.hufs.bhackathon.api.dto.response.*;
 import com.hufs.bhackathon.global.exception.CustomException;
 import com.hufs.bhackathon.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -107,7 +104,7 @@ public class DeliveryService{
         return "포장이 완료되었습니다.";
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public DashBoardResponseDto dashboard(Long workId) {
         Work work = workRepository.findById(workId).orElseThrow(() -> new CustomException(ErrorCode.WORK_NOT_FOUND));
         List<Delivery> deliveryList = deliveryRepository.findByWorkPageable(work, PageRequest.of(0,7));
@@ -127,8 +124,25 @@ public class DeliveryService{
             List<Item> itemList = mappingRepository.findByDelivery(delivery);
             dashBoardDeliveryResponseDtoList.add(DashBoardDeliveryResponseDto.of(delivery.getTrackingNum(),delivery.getDone(), itemList));
         }
-
         return DashBoardResponseDto.of(work.getWorkName(), work.getStartDate(), work.getEndDate(), totalDeliveryCount, doneDeliveryCount, avgCount, limit, dashBoardDeliveryResponseDtoList);
+    }
 
+
+    @Transactional(readOnly = true)
+    public GetDeliveryResponseDto getDelivery(Long workId) {
+        Work work = workRepository.findById(workId).orElseThrow(() -> new CustomException(ErrorCode.WORK_NOT_FOUND));
+        List<Delivery> deliveryList = deliveryRepository.findByWork(work);
+        List<DeliveryResponseDto> getDeliveryResponseDtoList = new ArrayList<>();
+
+        for(Delivery delivery : deliveryList) {
+            List<Item> itemList = mappingRepository.findByDelivery(delivery);
+            Long workerId = 0L;
+            try{
+                workerId = delivery.getWorkers().getId();
+            } catch (NullPointerException e) {
+            }
+            getDeliveryResponseDtoList.add(DeliveryResponseDto.of(delivery.getTrackingNum(), delivery.getDone(), workerId, itemList));
+        }
+        return GetDeliveryResponseDto.of(work.getWorkName(), work.getStartDate(), work.getEndDate(), getDeliveryResponseDtoList);
     }
 }
