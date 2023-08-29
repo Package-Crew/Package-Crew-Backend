@@ -1,8 +1,10 @@
 package com.hufs.bhackathon.api.domain.entity;
 
 import lombok.*;
+import net.bytebuddy.asm.Advice;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,12 +20,14 @@ public class Delivery {
     private Long trackingNum;
     private String videoUrl;
     private Integer done;
+    private LocalDateTime packagingDate;
 
     @Builder
-    public Delivery(Long trackingNum, String videoUrl, Integer done, Workers workers, Work work, Users users) {
+    public Delivery(Long trackingNum, String videoUrl, Integer done, LocalDateTime packagingDate, Workers workers, Work work, Users users) {
         this.trackingNum = trackingNum;
         this.videoUrl = videoUrl;
         this.done = done;
+        this.packagingDate = packagingDate;
         this.workers = workers;
         this.users = users;
         this.work = work;
@@ -57,5 +61,6 @@ public class Delivery {
         this.workers = workers;
         this.done = 1; // 완료로 변경
         this.videoUrl = videoUrl;
+        this.packagingDate = LocalDateTime.now();
     }
 }

@@ -8,13 +8,13 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
 
 @Getter
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
-public class WorkResponseDto {
-
+public class DashBoardResponseDto {
     private String workName;
     @JsonFormat(pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private Date startDate;
@@ -23,18 +23,21 @@ public class WorkResponseDto {
 
     private int total;
     private int clear;
+    private long limit;
     private int avg;
-    private int workers;
 
-    public static WorkResponseDto of(String workName, Date startDate, Date endDate, int workers, int total, int clear, int avg) {
-        return WorkResponseDto.builder()
+    private List<DashBoardDeliveryResponseDto> deliveryList; //7개만 보여주기
+
+    public static DashBoardResponseDto of(String workName, Date startDate, Date endDate, int total, int clear,int avg,  long limit, List<DashBoardDeliveryResponseDto> deliveryList) {
+        return DashBoardResponseDto.builder()
                 .workName(workName)
                 .startDate(startDate)
                 .endDate(endDate)
-                .workers(workers)
                 .total(total)
                 .clear(clear)
+                .limit(limit)
                 .avg(avg)
+                .deliveryList(deliveryList)
                 .build();
     }
 }

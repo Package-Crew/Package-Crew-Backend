@@ -2,6 +2,7 @@ package com.hufs.bhackathon.api.controller;
 
 import com.hufs.bhackathon.api.dto.request.DeliveryRequestDtoList;
 import com.hufs.bhackathon.api.dto.request.WorkRequestDto;
+import com.hufs.bhackathon.api.dto.response.DashBoardResponseDto;
 import com.hufs.bhackathon.api.dto.response.WorkResponseDto;
 import com.hufs.bhackathon.api.dto.response.QrResponseDto;
 import com.hufs.bhackathon.api.service.DeliveryService;
@@ -59,6 +60,12 @@ public class DeliveryController {
     @GetMapping("/previous/{userId}")
     public ResponseEntity<List<WorkResponseDto>> previousWork(@PathVariable Long userId) {
         List<WorkResponseDto> result = deliveryService.previousWork(userId);
+        return ResponseEntity.ok().body(result);
+    }
+
+    @GetMapping("/dashboard/{workId}")
+    public ResponseEntity<DashBoardResponseDto> dashboard(@PathVariable Long workId) {
+        DashBoardResponseDto result = deliveryService.dashboard(workId);
         return ResponseEntity.ok().body(result);
     }
 }

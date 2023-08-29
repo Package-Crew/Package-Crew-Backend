@@ -2,6 +2,7 @@ package com.hufs.bhackathon.api.domain.repository;
 
 import com.hufs.bhackathon.api.domain.entity.Delivery;
 import com.hufs.bhackathon.api.domain.entity.Work;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -18,4 +19,7 @@ public interface DeliveryRepository extends JpaRepository<Delivery, Long> {
 
     @Query("SELECT d FROM Delivery d WHERE d.work = :work AND d.done = 1")
     List<Delivery> findByWorkDone(Work work);
+
+    @Query("SELECT d FROM Delivery d WHERE d.work = :work AND d.done = 1 ORDER BY d.packagingDate DESC")
+    List<Delivery> findByWorkPageable(Work work, Pageable pageable);
 }

@@ -4,17 +4,26 @@ import com.hufs.bhackathon.api.domain.entity.*;
 import com.hufs.bhackathon.api.domain.repository.*;
 import com.hufs.bhackathon.api.dto.request.DeliveryRequestDto;
 import com.hufs.bhackathon.api.dto.request.WorkRequestDto;
+import com.hufs.bhackathon.api.dto.response.DashBoardDeliveryResponseDto;
+import com.hufs.bhackathon.api.dto.response.DashBoardResponseDto;
 import com.hufs.bhackathon.api.dto.response.WorkResponseDto;
 import com.hufs.bhackathon.api.dto.response.QrResponseDto;
 import com.hufs.bhackathon.global.exception.CustomException;
 import com.hufs.bhackathon.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.awt.print.Pageable;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+
+import static java.time.temporal.ChronoUnit.DAYS;
 
 @Service
 @RequiredArgsConstructor
@@ -96,5 +105,30 @@ public class DeliveryService{
         delivery.packaging(worker, videoUrl);
         deliveryRepository.save(delivery);
         return "포장이 완료되었습니다.";
+    }
+
+    @Transactional
+    public DashBoardResponseDto dashboard(Long workId) {
+        Work work = workRepository.findById(workId).orElseThrow(() -> new CustomException(ErrorCode.WORK_NOT_FOUND));
+        List<Delivery> deliveryList = deliveryRepository.findByWorkPageable(work, PageRequest.of(0,7));
+        List<DashBoardDeliveryResponseDto> dashBoardDeliveryResponseDtoList = new ArrayList<>();
+        int totalDeliveryCount = deliveryRepository.findByWork(work).size();
+        int doneDeliveryCount = deliveryRepository.findByWorkDone(work).size();
+        int avgCount = (int) ((double) doneDeliveryCount / (double) totalDeliveryCount * 100.0);
+        // 남은 시간 구하기 , Date로 된거 LocalDateTime으로 바꾸기
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime endDate = work.getEndDate().toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDateTime();
+        long limit = DAYS.between(now, endDate);
+
+        // 최신 배송 정보 7개 넣기
+        for(Delivery delivery : deliveryList) {
+            List<Item> itemList = mappingRepository.findByDelivery(delivery);
+            dashBoardDeliveryResponseDtoList.add(DashBoardDeliveryResponseDto.of(delivery.getTrackingNum(),delivery.getDone(), itemList));
+        }
+
+        return DashBoardResponseDto.of(work.getWorkName(), work.getStartDate(), work.getEndDate(), totalDeliveryCount, doneDeliveryCount, avgCount, limit, dashBoardDeliveryResponseDtoList);
+
     }
 }
