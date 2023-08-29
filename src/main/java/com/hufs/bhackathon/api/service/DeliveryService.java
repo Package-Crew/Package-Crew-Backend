@@ -159,6 +159,7 @@ public class DeliveryService{
         return dashBoardDeliveryResponseDtoList;
     }
 
+    @Transactional(readOnly = true)
     public ManageWorkerResponseDto getWorkerAll(Long workId) {
         Work work = workRepository.findById(workId).orElseThrow(() -> new CustomException(ErrorCode.WORK_NOT_FOUND));
         List<Workers> workersList = workersRepository.findByWork(work);
