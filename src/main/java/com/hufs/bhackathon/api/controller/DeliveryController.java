@@ -86,4 +86,9 @@ public class DeliveryController {
         return ResponseEntity.ok().body(result);
     }
 
+    @GetMapping("/process")
+    public ResponseEntity<GetDeliveryResponseDto> getProcess(@RequestParam Long workerId) {
+        GetDeliveryResponseDto result = deliveryService.getProcess(workerId);
+        return ResponseEntity.ok().body(result);
+    }
 }
