@@ -158,4 +158,16 @@ public class DeliveryService{
         }
         return dashBoardDeliveryResponseDtoList;
     }
+
+    public ManageWorkerResponseDto getWorkerAll(Long workId) {
+        Work work = workRepository.findById(workId).orElseThrow(() -> new CustomException(ErrorCode.WORK_NOT_FOUND));
+        List<Workers> workersList = workersRepository.findByWork(work);
+        List<AllWorkerResponseDto> allWorkerResponseDtos = new ArrayList<>();
+
+        for(Workers worker : workersList) {
+            int allDeliveryCount = deliveryRepository.findByWorkers(worker).size();
+            allWorkerResponseDtos.add(AllWorkerResponseDto.of(worker.getId(), worker.getMemo(), allDeliveryCount));
+        }
+        return ManageWorkerResponseDto.of(work.getWorkName(), work.getStartDate(), work.getEndDate(), allWorkerResponseDtos);
+    }
 }

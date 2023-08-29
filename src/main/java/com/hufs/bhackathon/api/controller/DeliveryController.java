@@ -79,4 +79,11 @@ public class DeliveryController {
         List<DashBoardDeliveryResponseDto> result = deliveryService.getDeliveryAll(workerId);
         return ResponseEntity.ok().body(result);
     }
+
+    @GetMapping("/worker/all/{workId}")
+    public ResponseEntity<ManageWorkerResponseDto> getWorkerAll(@PathVariable Long workId) {
+        ManageWorkerResponseDto result = deliveryService.getWorkerAll(workId);
+        return ResponseEntity.ok().body(result);
+    }
+
 }
