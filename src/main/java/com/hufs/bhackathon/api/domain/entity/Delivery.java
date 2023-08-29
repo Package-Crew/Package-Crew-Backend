@@ -23,12 +23,13 @@ public class Delivery {
     private Integer done;
 
     @Builder
-    public Delivery(Long trackingNum, String imageUrl, Integer done, Workers workers, Users users) {
+    public Delivery(Long trackingNum, String imageUrl, Integer done, Workers workers, Work work, Users users) {
         this.trackingNum = trackingNum;
         this.imageUrl = imageUrl;
         this.done = done;
         this.workers = workers;
         this.users = users;
+        this.work = work;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -39,13 +40,18 @@ public class Delivery {
     @JoinColumn(name = "users_id")
     private Users users;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "work_id")
+    private Work work;
+
     @OneToMany(mappedBy = "delivery", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Mapping> mappingList = new ArrayList<>();
 
-    public static Delivery of(Long trackingNum, Users user) {
+    public static Delivery of(Long trackingNum, Users user, Work work) {
         return Delivery.builder()
                 .trackingNum(trackingNum)
                 .users(user)
+                .work(work)
                 .done(0)
                 .build();
     }

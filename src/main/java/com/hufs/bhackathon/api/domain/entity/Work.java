@@ -45,6 +45,9 @@ public class Work {
     @OneToMany(mappedBy = "work", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Workers> workersList = new ArrayList<>();
 
+    @OneToMany(mappedBy = "work", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Delivery> deliveryList = new ArrayList<>();
+
     public static Work of(WorkRequestDto workRequestDto, Users user) {
         return Work.builder()
                 .workName(workRequestDto.getWorkName())

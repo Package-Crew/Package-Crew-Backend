@@ -1,8 +1,8 @@
 package com.hufs.bhackathon.api.controller;
 
-import com.hufs.bhackathon.api.dto.request.DeliveryRequestDto;
 import com.hufs.bhackathon.api.dto.request.DeliveryRequestDtoList;
 import com.hufs.bhackathon.api.dto.request.WorkRequestDto;
+import com.hufs.bhackathon.api.dto.response.WorkResponseDto;
 import com.hufs.bhackathon.api.dto.response.QrResponseDto;
 import com.hufs.bhackathon.api.service.DeliveryService;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +35,26 @@ public class DeliveryController {
     @GetMapping("/qrscan")
     public ResponseEntity<QrResponseDto> qrScan(@RequestParam Long trackingNum) {
         QrResponseDto result = deliveryService.qrScan(trackingNum);
+        return ResponseEntity.ok().body(result);
+    }
+
+    /**
+     * 알바생 등록하고 나서 패키징 마저 하기
+     */
+//    @PostMapping("/packaging/{trackingNum}/{workerId}")
+//    public ResponseEntity<String> packaging(@PathVariable Long trackingNum, @PathVariable Long workerId) {
+//        String result = deliveryService.packaging(trackingNum, workerId);
+//        return ResponseEntity.ok().body(result);
+//    }
+    @GetMapping("/now/{userId}")
+    public ResponseEntity<List<WorkResponseDto>> nowWork(@PathVariable Long userId) {
+        List<WorkResponseDto> result = deliveryService.nowWork(userId);
+        return ResponseEntity.ok().body(result);
+    }
+
+    @GetMapping("/previous/{userId}")
+    public ResponseEntity<List<WorkResponseDto>> previousWork(@PathVariable Long userId) {
+        List<WorkResponseDto> result = deliveryService.previousWork(userId);
         return ResponseEntity.ok().body(result);
     }
 }
