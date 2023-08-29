@@ -19,12 +19,10 @@ public class Workers {
     private Long id;
 
     private String memo;
-    private String workerUrl;
 
     @Builder
-    public Workers(String memo, String workerUrl, Work work) {
+    public Workers(String memo, Work work) {
         this.memo = memo;
-        this.workerUrl = workerUrl;
         this.work = work;
     }
 
@@ -34,4 +32,11 @@ public class Workers {
 
     @OneToMany(mappedBy = "workers", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Delivery> deliveryList = new ArrayList<>();
+
+    public static Workers of(String memo, Work work) {
+        return Workers.builder()
+                .memo(memo)
+                .work(work)
+                .build();
+    }
 }

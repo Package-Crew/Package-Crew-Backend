@@ -1,10 +1,16 @@
 package com.hufs.bhackathon.api.service;
 
 import com.hufs.bhackathon.api.domain.entity.Users;
+import com.hufs.bhackathon.api.domain.entity.Work;
+import com.hufs.bhackathon.api.domain.entity.Workers;
 import com.hufs.bhackathon.api.domain.repository.UsersRepository;
+import com.hufs.bhackathon.api.domain.repository.WorkRepository;
+import com.hufs.bhackathon.api.domain.repository.WorkersRepository;
 import com.hufs.bhackathon.api.dto.request.JoinDto;
 import com.hufs.bhackathon.api.dto.request.LoginDto;
+import com.hufs.bhackathon.api.dto.request.WorkerRequestDto;
 import com.hufs.bhackathon.api.dto.response.LoginResponseDto;
+import com.hufs.bhackathon.api.dto.response.PostWorkerResponseDto;
 import com.hufs.bhackathon.global.exception.CustomException;
 import com.hufs.bhackathon.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +22,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class UsersService {
 
     private final UsersRepository usersRepository;
+    private final WorkRepository workRepository;
+    private final WorkersRepository workersRepository;
 
 
     @Transactional
@@ -32,5 +40,11 @@ public class UsersService {
     public LoginResponseDto login(LoginDto loginDto) {
         Users user = usersRepository.findByEmailAndPassword(loginDto.getEmail(), loginDto.getPassword()).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
         return LoginResponseDto.of(user.getId());
+    }
+
+    public PostWorkerResponseDto postWorker(Long workId, WorkerRequestDto workerRequestDto) {
+        Work work = workRepository.findById(workId).orElseThrow(() -> new CustomException(ErrorCode.WORK_NOT_FOUND));
+        Workers worker = workersRepository.save(Workers.of(workerRequestDto.getMemo(), work));
+        return PostWorkerResponseDto.of(workId, worker.getId());
     }
 }
