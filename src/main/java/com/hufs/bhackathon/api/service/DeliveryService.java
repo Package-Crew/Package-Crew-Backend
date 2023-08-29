@@ -145,4 +145,17 @@ public class DeliveryService{
         }
         return GetDeliveryResponseDto.of(work.getWorkName(), work.getStartDate(), work.getEndDate(), getDeliveryResponseDtoList);
     }
+
+    @Transactional(readOnly = true)
+    public List<DashBoardDeliveryResponseDto> getDeliveryAll(Long workerId) {
+        Workers worker = workersRepository.findById(workerId).orElseThrow(() -> new CustomException(ErrorCode.WORKER_NOT_FOUND));
+        List<Delivery> deliveryList = deliveryRepository.findByWorkers(worker);
+        List<DashBoardDeliveryResponseDto> dashBoardDeliveryResponseDtoList = new ArrayList<>();
+
+        for(Delivery delivery : deliveryList) {
+            List<Item> itemList = mappingRepository.findByDelivery(delivery);
+            dashBoardDeliveryResponseDtoList.add(DashBoardDeliveryResponseDto.of(delivery.getTrackingNum(), delivery.getDone(), itemList));
+        }
+        return dashBoardDeliveryResponseDtoList;
+    }
 }

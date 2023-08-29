@@ -2,12 +2,10 @@ package com.hufs.bhackathon.api.controller;
 
 import com.hufs.bhackathon.api.dto.request.DeliveryRequestDtoList;
 import com.hufs.bhackathon.api.dto.request.WorkRequestDto;
-import com.hufs.bhackathon.api.dto.response.DashBoardResponseDto;
-import com.hufs.bhackathon.api.dto.response.GetDeliveryResponseDto;
-import com.hufs.bhackathon.api.dto.response.WorkResponseDto;
-import com.hufs.bhackathon.api.dto.response.QrResponseDto;
+import com.hufs.bhackathon.api.dto.response.*;
 import com.hufs.bhackathon.api.service.DeliveryService;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -73,6 +71,12 @@ public class DeliveryController {
     @GetMapping("/delivery/{workId}")
     public ResponseEntity<GetDeliveryResponseDto> getDelivery(@PathVariable Long workId) {
         GetDeliveryResponseDto result = deliveryService.getDelivery(workId);
+        return ResponseEntity.ok().body(result);
+    }
+
+    @GetMapping("/delivery/all/{workerId}")
+    public ResponseEntity<List<DashBoardDeliveryResponseDto>> getDeliveryAll(@PathVariable Long workerId) {
+        List<DashBoardDeliveryResponseDto> result = deliveryService.getDeliveryAll(workerId);
         return ResponseEntity.ok().body(result);
     }
 }
