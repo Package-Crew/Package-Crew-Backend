@@ -3,6 +3,7 @@ package com.hufs.bhackathon.api.controller;
 import com.hufs.bhackathon.api.dto.request.DeliveryRequestDto;
 import com.hufs.bhackathon.api.dto.request.DeliveryRequestDtoList;
 import com.hufs.bhackathon.api.dto.request.WorkRequestDto;
+import com.hufs.bhackathon.api.dto.response.QrResponseDto;
 import com.hufs.bhackathon.api.service.DeliveryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -31,4 +32,9 @@ public class DeliveryController {
         return ResponseEntity.ok().body(result);
     }
 
+    @GetMapping("/qrscan")
+    public ResponseEntity<QrResponseDto> qrScan(@RequestParam Long trackingNum) {
+        QrResponseDto result = deliveryService.qrScan(trackingNum);
+        return ResponseEntity.ok().body(result);
+    }
 }

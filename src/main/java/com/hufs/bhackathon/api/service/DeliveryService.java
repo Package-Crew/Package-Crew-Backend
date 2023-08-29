@@ -1,13 +1,16 @@
 package com.hufs.bhackathon.api.service;
 
 import com.hufs.bhackathon.api.domain.entity.Delivery;
+import com.hufs.bhackathon.api.domain.entity.Item;
 import com.hufs.bhackathon.api.domain.entity.Users;
 import com.hufs.bhackathon.api.domain.entity.Work;
+import com.hufs.bhackathon.api.domain.repository.MappingRepository;
 import com.hufs.bhackathon.api.domain.repository.UsersRepository;
 import com.hufs.bhackathon.api.domain.repository.DeliveryRepository;
 import com.hufs.bhackathon.api.domain.repository.WorkRepository;
 import com.hufs.bhackathon.api.dto.request.DeliveryRequestDto;
 import com.hufs.bhackathon.api.dto.request.WorkRequestDto;
+import com.hufs.bhackathon.api.dto.response.QrResponseDto;
 import com.hufs.bhackathon.global.exception.CustomException;
 import com.hufs.bhackathon.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +27,7 @@ public class DeliveryService {
     private final WorkRepository workRepository;
     private final UsersRepository usersRepository;
     private final MappingService mappingService;
+    private final MappingRepository mappingRepository;
     private final ItemService itemService;
 
     @Transactional
@@ -43,5 +47,13 @@ public class DeliveryService {
             mappingService.mapToDeliveryAndItem(delivery, delivery.getItems()); // 운송장 번호랑 이미 등록했던 상품이랑 매핑하기
         }
         return "배송이 등록되었습니다.";
+    }
+
+    @Transactional
+    public QrResponseDto qrScan(Long trackingNum) {
+        Delivery delivery = deliveryRepository.findByTrackingNum(trackingNum).orElseThrow(() -> new CustomException(ErrorCode.DELIVERY_NOT_FOUND));
+        List<Item> itemList = mappingRepository.findByDelivery(delivery);
+
+        return QrResponseDto.of(trackingNum, itemList);
     }
 }
