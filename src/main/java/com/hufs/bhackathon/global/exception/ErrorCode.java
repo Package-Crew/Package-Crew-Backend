@@ -16,6 +16,7 @@ public enum ErrorCode {
     WORK_NOT_FOUND(NOT_FOUND, "작업을 찾을 수 없습니다"),
     ITEM_NOT_FOUND(NOT_FOUND, "상품을 찾을 수 없습니다"),
     DELIVERY_NOT_FOUND(NOT_FOUND, "배송을 찾을 수 없습니다"),
+    WORKER_NOT_FOUND(NOT_FOUND, "작업자를 찾을 수 없습니다"),
     FAIL_IMAGE_UPLOAD(INTERNAL_SERVER_ERROR, "이미지 업로드 실패");
 
 

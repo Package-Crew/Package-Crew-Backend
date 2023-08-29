@@ -1,9 +1,6 @@
 package com.hufs.bhackathon.api.domain.entity;
 
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -19,13 +16,13 @@ public class Delivery {
     private Long id;
 
     private Long trackingNum;
-    private String imageUrl;
+    private String videoUrl;
     private Integer done;
 
     @Builder
-    public Delivery(Long trackingNum, String imageUrl, Integer done, Workers workers, Work work, Users users) {
+    public Delivery(Long trackingNum, String videoUrl, Integer done, Workers workers, Work work, Users users) {
         this.trackingNum = trackingNum;
-        this.imageUrl = imageUrl;
+        this.videoUrl = videoUrl;
         this.done = done;
         this.workers = workers;
         this.users = users;
@@ -54,5 +51,11 @@ public class Delivery {
                 .work(work)
                 .done(0)
                 .build();
+    }
+
+    public void packaging(Workers workers, String videoUrl) {
+        this.workers = workers;
+        this.done = 1; // 완료로 변경
+        this.videoUrl = videoUrl;
     }
 }

@@ -1,9 +1,6 @@
 package com.hufs.bhackathon.api.service;
 
-import com.hufs.bhackathon.api.domain.entity.Delivery;
-import com.hufs.bhackathon.api.domain.entity.Item;
-import com.hufs.bhackathon.api.domain.entity.Users;
-import com.hufs.bhackathon.api.domain.entity.Work;
+import com.hufs.bhackathon.api.domain.entity.*;
 import com.hufs.bhackathon.api.domain.repository.*;
 import com.hufs.bhackathon.api.dto.request.DeliveryRequestDto;
 import com.hufs.bhackathon.api.dto.request.WorkRequestDto;
@@ -14,13 +11,14 @@ import com.hufs.bhackathon.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class DeliveryService<nowWorkList> {
+public class DeliveryService{
 
     private final DeliveryRepository deliveryRepository;
     private final WorkRepository workRepository;
@@ -28,7 +26,7 @@ public class DeliveryService<nowWorkList> {
     private final MappingService mappingService;
     private final MappingRepository mappingRepository;
     private final WorkersRepository workersRepository;
-    private final ItemService itemService;
+    private final S3Service s3Service;
 
     @Transactional
     public Long postWork(Long userId, WorkRequestDto workRequestDto) {
@@ -49,7 +47,7 @@ public class DeliveryService<nowWorkList> {
         return "배송이 등록되었습니다.";
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public QrResponseDto qrScan(Long trackingNum) {
         Delivery delivery = deliveryRepository.findByTrackingNum(trackingNum).orElseThrow(() -> new CustomException(ErrorCode.DELIVERY_NOT_FOUND));
         List<Item> itemList = mappingRepository.findByDelivery(delivery);
@@ -57,6 +55,7 @@ public class DeliveryService<nowWorkList> {
         return QrResponseDto.of(trackingNum, itemList);
     }
 
+    @Transactional(readOnly = true)
     public List<WorkResponseDto> nowWork(Long userId) {
         Users user = usersRepository.findById(userId).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
         List<WorkResponseDto> nowWorkResponseList = new ArrayList<>();
@@ -72,6 +71,7 @@ public class DeliveryService<nowWorkList> {
         return nowWorkResponseList;
     }
 
+    @Transactional(readOnly = true)
     public List<WorkResponseDto> previousWork(Long userId) {
         Users user = usersRepository.findById(userId).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
         List<WorkResponseDto> previousWorkResponseList = new ArrayList<>();
@@ -87,14 +87,14 @@ public class DeliveryService<nowWorkList> {
         return previousWorkResponseList;
     }
 
-//    public String packaging(Long trackingNum, Long workerId) {
-//        Delivery delivery = deliveryRepository.findByTrackingNum(trackingNum).orElseThrow(() -> new CustomException(ErrorCode.DELIVERY_NOT_FOUND));
-//        Users worker = usersRepository.findById(workerId).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-//        List<Item> itemList = mappingRepository.findByDelivery(delivery);
-//
-//        for (Item item : itemList) {
-//            itemService.packaging(item.getId(), worker);
-//        }
-//        return "포장이 완료되었습니다.";
-//    }
+    @Transactional
+    public String packaging(Long trackingNum, Long workerId, MultipartFile video) {
+        Delivery delivery = deliveryRepository.findByTrackingNum(trackingNum).orElseThrow(() -> new CustomException(ErrorCode.DELIVERY_NOT_FOUND));
+        String videoUrl = s3Service.uploadImage(video);
+        Workers worker = workersRepository.findById(workerId).orElseThrow(() -> new CustomException(ErrorCode.WORKER_NOT_FOUND));
+        // delivery에서 작업한 worker 등록하기
+        delivery.packaging(worker, videoUrl);
+        deliveryRepository.save(delivery);
+        return "포장이 완료되었습니다.";
+    }
 }

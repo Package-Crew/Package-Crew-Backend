@@ -8,6 +8,7 @@ import com.hufs.bhackathon.api.service.DeliveryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -41,11 +42,14 @@ public class DeliveryController {
     /**
      * 알바생 등록하고 나서 패키징 마저 하기
      */
-//    @PostMapping("/packaging/{trackingNum}/{workerId}")
-//    public ResponseEntity<String> packaging(@PathVariable Long trackingNum, @PathVariable Long workerId) {
-//        String result = deliveryService.packaging(trackingNum, workerId);
-//        return ResponseEntity.ok().body(result);
-//    }
+    @PostMapping("/packaging/{trackingNum}/{workerId}")
+    public ResponseEntity<String> packaging(@PathVariable Long trackingNum,
+                                            @PathVariable Long workerId,
+                                            @RequestPart MultipartFile video) {
+        String result = deliveryService.packaging(trackingNum, workerId, video);
+        return ResponseEntity.ok().body(result);
+    }
+
     @GetMapping("/now/{userId}")
     public ResponseEntity<List<WorkResponseDto>> nowWork(@PathVariable Long userId) {
         List<WorkResponseDto> result = deliveryService.nowWork(userId);

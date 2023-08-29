@@ -42,6 +42,7 @@ public class UsersService {
         return LoginResponseDto.of(user.getId());
     }
 
+    @Transactional
     public PostWorkerResponseDto postWorker(Long workId, WorkerRequestDto workerRequestDto) {
         Work work = workRepository.findById(workId).orElseThrow(() -> new CustomException(ErrorCode.WORK_NOT_FOUND));
         Workers worker = workersRepository.save(Workers.of(workerRequestDto.getMemo(), work));
