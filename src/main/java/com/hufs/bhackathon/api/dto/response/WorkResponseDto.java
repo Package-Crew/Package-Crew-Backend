@@ -23,12 +23,14 @@ public class WorkResponseDto {
     private int total;
     private int clear;
     private int avg;
+    private int workers;
 
-    public static WorkResponseDto of(String workName, Date startDate, Date endDate, int total, int clear, int avg) {
+    public static WorkResponseDto of(String workName, Date startDate, Date endDate, int workers, int total, int clear, int avg) {
         return WorkResponseDto.builder()
                 .workName(workName)
                 .startDate(startDate)
                 .endDate(endDate)
+                .workers(workers)
                 .total(total)
                 .clear(clear)
                 .avg(avg)

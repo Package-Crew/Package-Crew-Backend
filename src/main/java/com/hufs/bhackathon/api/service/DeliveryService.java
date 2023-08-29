@@ -4,10 +4,7 @@ import com.hufs.bhackathon.api.domain.entity.Delivery;
 import com.hufs.bhackathon.api.domain.entity.Item;
 import com.hufs.bhackathon.api.domain.entity.Users;
 import com.hufs.bhackathon.api.domain.entity.Work;
-import com.hufs.bhackathon.api.domain.repository.MappingRepository;
-import com.hufs.bhackathon.api.domain.repository.UsersRepository;
-import com.hufs.bhackathon.api.domain.repository.DeliveryRepository;
-import com.hufs.bhackathon.api.domain.repository.WorkRepository;
+import com.hufs.bhackathon.api.domain.repository.*;
 import com.hufs.bhackathon.api.dto.request.DeliveryRequestDto;
 import com.hufs.bhackathon.api.dto.request.WorkRequestDto;
 import com.hufs.bhackathon.api.dto.response.WorkResponseDto;
@@ -30,6 +27,7 @@ public class DeliveryService<nowWorkList> {
     private final UsersRepository usersRepository;
     private final MappingService mappingService;
     private final MappingRepository mappingRepository;
+    private final WorkersRepository workersRepository;
     private final ItemService itemService;
 
     @Transactional
@@ -68,7 +66,8 @@ public class DeliveryService<nowWorkList> {
             int allDeliveryCount = deliveryRepository.findByWork(work).size();
         	int doneDeliveryCount = deliveryRepository.findByWorkDone(work).size();
             int avgCount = (int) ((double) doneDeliveryCount / (double) allDeliveryCount * 100.0);
-            nowWorkResponseList.add(WorkResponseDto.of(work.getWorkName(), work.getStartDate(), work.getEndDate(), allDeliveryCount, doneDeliveryCount, avgCount ));
+            int workers = workersRepository.findByWork(work).size();
+            nowWorkResponseList.add(WorkResponseDto.of(work.getWorkName(), work.getStartDate(), work.getEndDate(), workers, allDeliveryCount, doneDeliveryCount, avgCount ));
         }
         return nowWorkResponseList;
     }
@@ -82,7 +81,8 @@ public class DeliveryService<nowWorkList> {
             int allDeliveryCount = deliveryRepository.findByWork(work).size();
         	int doneDeliveryCount = deliveryRepository.findByWorkDone(work).size();
             int avgCount = (int) ((double) doneDeliveryCount / (double) allDeliveryCount * 100.0);
-            previousWorkResponseList.add(WorkResponseDto.of(work.getWorkName(), work.getStartDate(), work.getEndDate(), allDeliveryCount, doneDeliveryCount, avgCount ));
+            int workers = workersRepository.findByWork(work).size();
+            previousWorkResponseList.add(WorkResponseDto.of(work.getWorkName(), work.getStartDate(), work.getEndDate(), workers, allDeliveryCount, doneDeliveryCount, avgCount ));
         }
         return previousWorkResponseList;
     }
