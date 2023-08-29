@@ -13,11 +13,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.awt.print.Pageable;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import static java.time.temporal.ChronoUnit.DAYS;
@@ -183,5 +181,25 @@ public class DeliveryService{
             getDeliveryResponseDtoList.add(DeliveryResponseDto.of(delivery.getTrackingNum(), delivery.getDone(), workerId, itemList));
         }
         return GetDeliveryResponseDto.of(worker.getWork().getWorkName(), worker.getWork().getStartDate(), worker.getWork().getEndDate(), getDeliveryResponseDtoList);
+    }
+
+    @Transactional(readOnly = true)
+    public ProcessResponseDto getAllProcess(Long workerId) {
+        Workers worker = workersRepository.findById(workerId).orElseThrow(() -> new CustomException(ErrorCode.WORKER_NOT_FOUND));
+        Work work = worker.getWork();
+        int totalSize = work.getDeliveryList().size(); // 전체 개수
+        int doneSize = deliveryRepository.findByWorkDone(work).size(); // 전체에서 작업 완료한거
+        int avgCount = (int) ((double) doneSize / (double) totalSize * 100.0); // 평균
+        int my = deliveryRepository.findByWorkersDone(worker).size(); // 내가 작업 완료한거
+        int myPercent = (int) ((double) my / (double) doneSize * 100.0); // 내가 작업 완료한거 평균
+        int myTotal = (int) (((double) myPercent  * (double) totalSize) / 100.0); // 나의 예상 업무 개수
+        // 남은 시간 구하기 , Date로 된거 LocalDateTime으로 바꾸기
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime endDate = work.getEndDate().toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDateTime();
+        long limit = DAYS.between(now, endDate);
+
+        return ProcessResponseDto.of(work.getWorkName(), work.getStartDate(), work.getEndDate(), totalSize, doneSize,avgCount, limit, my, myPercent, myTotal);
     }
 }

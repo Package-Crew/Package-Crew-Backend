@@ -5,7 +5,6 @@ import com.hufs.bhackathon.api.dto.request.WorkRequestDto;
 import com.hufs.bhackathon.api.dto.response.*;
 import com.hufs.bhackathon.api.service.DeliveryService;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -89,6 +88,12 @@ public class DeliveryController {
     @GetMapping("/process")
     public ResponseEntity<GetDeliveryResponseDto> getProcess(@RequestParam Long workerId) {
         GetDeliveryResponseDto result = deliveryService.getProcess(workerId);
+        return ResponseEntity.ok().body(result);
+    }
+
+    @GetMapping("/process/all")
+    public ResponseEntity<ProcessResponseDto> getAllProcess(@RequestParam Long workerId) {
+        ProcessResponseDto result = deliveryService.getAllProcess(workerId);
         return ResponseEntity.ok().body(result);
     }
 }

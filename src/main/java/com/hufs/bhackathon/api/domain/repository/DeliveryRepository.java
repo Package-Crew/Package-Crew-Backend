@@ -25,4 +25,7 @@ public interface DeliveryRepository extends JpaRepository<Delivery, Long> {
     List<Delivery> findByWorkPageable(Work work, Pageable pageable);
 
     List<Delivery> findByWorkers(Workers worker);
+
+    @Query("SELECT d FROM Delivery d WHERE d.workers = :worker AND d.done = 1")
+    List<Delivery> findByWorkersDone(Workers worker);
 }
