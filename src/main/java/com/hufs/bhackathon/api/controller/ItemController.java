@@ -13,17 +13,18 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/dangdol")
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class ItemController {
 
     private final ItemService itemService;
 
 
-    @PostMapping("/item/{userId}")
+    @PostMapping("/item/{userId}/{itemName}")
     public ResponseEntity<String> postItem(
             @PathVariable Long userId,
-            @RequestPart MultipartFile image,
-            @RequestPart ItemRequestDto itemRequestDto) {
-        String result = itemService.postItem(userId, image, itemRequestDto);
+            @PathVariable String itemName,
+            @RequestPart MultipartFile image) {
+        String result = itemService.postItem(userId, image, itemName);
         return ResponseEntity.ok().body(result);
     }
 

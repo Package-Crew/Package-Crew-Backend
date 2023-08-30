@@ -15,6 +15,7 @@ import java.util.Date;
 @Builder
 public class WorkResponseDto {
 
+    private Long id;
     private String workName;
     @JsonFormat(pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private Date startDate;
@@ -26,8 +27,9 @@ public class WorkResponseDto {
     private int avg;
     private int workers;
 
-    public static WorkResponseDto of(String workName, Date startDate, Date endDate, int workers, int total, int clear, int avg) {
+    public static WorkResponseDto of(Long id, String workName, Date startDate, Date endDate, int workers, int total, int clear, int avg) {
         return WorkResponseDto.builder()
+                .id(id)
                 .workName(workName)
                 .startDate(startDate)
                 .endDate(endDate)

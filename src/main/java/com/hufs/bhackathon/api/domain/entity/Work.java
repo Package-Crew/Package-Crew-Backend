@@ -5,11 +5,8 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.joda.time.DateTime;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -48,13 +45,13 @@ public class Work {
     @OneToMany(mappedBy = "work", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Delivery> deliveryList = new ArrayList<>();
 
-    public static Work of(WorkRequestDto workRequestDto, Users user) {
+    public static Work of(WorkRequestDto workRequestDto, Users users) {
         return Work.builder()
                 .workName(workRequestDto.getWorkName())
                 .done(Integer.valueOf(0))
                 .startDate(workRequestDto.getStartDate())
                 .endDate(workRequestDto.getEndDate())
-                .users(user)
+                .users(users)
                 .build();
     }
 }

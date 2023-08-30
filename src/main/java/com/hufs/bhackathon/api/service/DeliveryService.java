@@ -70,7 +70,7 @@ public class DeliveryService{
         	int doneDeliveryCount = deliveryRepository.findByWorkDone(work).size();
             int avgCount = (int) ((double) doneDeliveryCount / (double) allDeliveryCount * 100.0);
             int workers = workersRepository.findByWork(work).size();
-            nowWorkResponseList.add(WorkResponseDto.of(work.getWorkName(), work.getStartDate(), work.getEndDate(), workers, allDeliveryCount, doneDeliveryCount, avgCount ));
+            nowWorkResponseList.add(WorkResponseDto.of(work.getId(), work.getWorkName(), work.getStartDate(), work.getEndDate(), workers, allDeliveryCount, doneDeliveryCount, avgCount ));
         }
         return nowWorkResponseList;
     }
@@ -86,7 +86,7 @@ public class DeliveryService{
         	int doneDeliveryCount = deliveryRepository.findByWorkDone(work).size();
             int avgCount = (int) ((double) doneDeliveryCount / (double) allDeliveryCount * 100.0);
             int workers = workersRepository.findByWork(work).size();
-            previousWorkResponseList.add(WorkResponseDto.of(work.getWorkName(), work.getStartDate(), work.getEndDate(), workers, allDeliveryCount, doneDeliveryCount, avgCount ));
+            previousWorkResponseList.add(WorkResponseDto.of(work.getId(), work.getWorkName(), work.getStartDate(), work.getEndDate(), workers, allDeliveryCount, doneDeliveryCount, avgCount ));
         }
         return previousWorkResponseList;
     }
@@ -203,6 +203,7 @@ public class DeliveryService{
         return ProcessResponseDto.of(work.getWorkName(), work.getStartDate(), work.getEndDate(), totalSize, doneSize,avgCount, limit, my, myPercent, myTotal);
     }
 
+    @Transactional(readOnly = true)
     public String getVideo(Long trackingNum) {
         Delivery delivery = deliveryRepository.findByTrackingNum(trackingNum).orElseThrow(() -> new CustomException(ErrorCode.DELIVERY_NOT_FOUND));
         return delivery.getVideoUrl();

@@ -4,7 +4,6 @@ import com.hufs.bhackathon.api.domain.entity.Item;
 import com.hufs.bhackathon.api.domain.entity.Users;
 import com.hufs.bhackathon.api.domain.repository.ItemRepository;
 import com.hufs.bhackathon.api.domain.repository.UsersRepository;
-import com.hufs.bhackathon.api.dto.request.ItemIdRequestDto;
 import com.hufs.bhackathon.api.dto.request.ItemRequestDto;
 import com.hufs.bhackathon.api.dto.response.ItemResponseDto;
 import com.hufs.bhackathon.global.exception.CustomException;
@@ -26,10 +25,10 @@ public class ItemService {
     private final S3Service s3Service;
 
     @Transactional
-    public String postItem(Long userId, MultipartFile image, ItemRequestDto itemRequestDto) {
+    public String postItem(Long userId, MultipartFile image, String itemName) {
         Users user = usersRepository.findById(userId).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
         String imageUrl = s3Service.uploadImage(image);
-        itemRepository.save(Item.of(itemRequestDto.getItemName(), imageUrl, user));
+        itemRepository.save(Item.of(itemName, imageUrl, user));
         return "상품이 등록되었습니다.";
     }
 

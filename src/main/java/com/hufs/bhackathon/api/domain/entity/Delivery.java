@@ -1,7 +1,6 @@
 package com.hufs.bhackathon.api.domain.entity;
 
 import lombok.*;
-import net.bytebuddy.asm.Advice;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -48,10 +47,10 @@ public class Delivery {
     @OneToMany(mappedBy = "delivery", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Mapping> mappingList = new ArrayList<>();
 
-    public static Delivery of(Long trackingNum, Users user, Work work) {
+    public static Delivery of(Long trackingNum, Users users, Work work) {
         return Delivery.builder()
                 .trackingNum(trackingNum)
-                .users(user)
+                .users(users)
                 .work(work)
                 .done(0)
                 .build();

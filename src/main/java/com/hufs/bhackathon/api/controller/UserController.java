@@ -12,7 +12,8 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-public class UsersController {
+@CrossOrigin(origins = "*", allowedHeaders = "*")
+public class UserController {
 
     private final UsersService usersService;
 

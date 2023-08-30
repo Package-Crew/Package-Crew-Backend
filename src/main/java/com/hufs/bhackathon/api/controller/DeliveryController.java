@@ -14,6 +14,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/dangdol")
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class DeliveryController {
 
     private final DeliveryService deliveryService;
